@@ -16,7 +16,7 @@ def multi_processor(cfg, cmd_set):
         NumTotalProc = NumTotalProc - 1
 
     StartedProc = 0
-    
+
     while(StartedProc < NumTotalProc):
 
         sub_proc = check_proc(sub_proc)
@@ -24,11 +24,12 @@ def multi_processor(cfg, cmd_set):
         if len(sub_proc) < cfg['processes']:
             cmd, seq, qp_or_br = cmd_set[StartedProc]
             print("==> Start running %50s %d"%(seq, qp_or_br))
+            print(cmd)
             p = subprocess.Popen(cmd, shell=True)
             sub_proc.append(p)
-            StartedProc = StartedProc + 1                               
+            StartedProc = StartedProc + 1
         time.sleep(0.1)
-    
+
     if cfg['fake_proc']:
         fake_proc = []
         while len(check_proc(sub_proc)) > 0:  # Ensure real proc is done
@@ -38,14 +39,13 @@ def multi_processor(cfg, cmd_set):
                 fake_proc.append(p)
             time.sleep(0.1)
         subprocess.Popen("kill -9 $(pidof " + cfg['enc_name'] + ")", shell=True)
-    
+
     else:
         while len(check_proc(sub_proc)) > 0:
             time.sleep(0.1)
 
-        
+
 def single_processor(cmd_set):
     for cmd in cmd_set:
         print("==> Start encoding %50s %d"%(cmd[1], cmd[2]))
         os.system(cmd[0])
-        

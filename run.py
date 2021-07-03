@@ -5,7 +5,7 @@ from command import get_cmd_set
 from processor import multi_processor, single_processor
 
 
-cfg_file_path = 'bytevca.cfg'
+cfg_file_path = 'hpm.cfg'
 cfg = read_cfg(cfg_file_path)
 
 if os.path.exists(cfg['output_path']) == 0:
@@ -31,18 +31,18 @@ else:
 end_time = time.time()
 print('==> Finish encoding. || Run time: {:.2f} sec.'.format(end_time - start_time))
 
-# cmd_set = get_cmd_set(cfg, enc_dec='dec')
-# # start decoding
-# print('==> Start decoding.')
-# start_time = time.time()
-# if cfg['processes'] <= 1:
-#     single_processor(cmd_set)
-# else:
-#     multi_processor(cfg, cmd_set)
+cmd_set = get_cmd_set(cfg, enc_dec='dec')
+# start decoding
+print('==> Start decoding.')
+start_time = time.time()
+if cfg['processes'] <= 1:
+    single_processor(cmd_set)
+else:
+    multi_processor(cfg, cmd_set)
 
-# #finish decodeing
-# end_time = time.time()
-# print('==> Finish decoding. || Run time: {:.2f} sec.'.format(end_time - start_time))
+#finish decodeing
+end_time = time.time()
+print('==> Finish decoding. || Run time: {:.2f} sec.'.format(end_time - start_time))
 
 
 
