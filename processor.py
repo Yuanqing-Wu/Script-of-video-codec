@@ -24,7 +24,7 @@ def multi_processor(cfg, cmd_set):
         if len(sub_proc) < cfg['processes']:
             cmd, seq, qp_or_br = cmd_set[StartedProc]
             print("==> Start running %50s %d"%(seq, qp_or_br))
-            print(cmd)
+            #print(cmd)
             p = subprocess.Popen(cmd, shell=True)
             sub_proc.append(p)
             StartedProc = StartedProc + 1

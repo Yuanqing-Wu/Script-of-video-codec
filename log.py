@@ -1,45 +1,55 @@
-import pandas as pd
 from config import read_cfg
-import numpy as np
 
-# cfg_file_path = 'bytevca.cfg'
-# cfg = read_cfg(cfg_file_path)
+def get_log_list(cfg):
+    file_list = []
+    for seq in cfg['test_seq']:
+        if cfg['rate_control_mode'] == 0:
+            for qp in cfg['qp']:
+                file= cfg['output_path']  + '/' + 'log' + '/Enc_' + seq.split('.yuv')[0] + '_qp' + str(qp) + '.log'
+                file_list.append(file)
+        else:
+            for br in cfg['bitrate']:
+                file += '>' + cfg['output_path']  + '/' + 'log' + '/Enc_' + seq.split('.yuv')[0] + '_bitrate' + str(br) + '.log'
+                file_list.append(file)
+    return file_list
 
-# log_pathes = []
+def get_metric(file_path):
 
-# for seq in cfg['test_seq']:
-#     for qp in cfg['qp']:
-#         log_path = seq.split('.yuv')[0] + '_qp' + str(qp) + '.bin2.log'
-#         log_pathes.append(log_path)
+    file = open(file_path, 'r')
 
-# first_read = 1
-# for log_path in log_pathes:
-#     print(log_path)
-#     seq_name, _, _, _, qp = log_path.split('_') 
-#     qp = qp.split('.')[0]
-#     qp = qp.split('qp')[1]
-#     df = pd.read_csv(cfg['output_path'] + '/bin/' + log_path)
-#     # df['seq'] = seq_name
-#     # df['qp'] = int(qp)
-#     if first_read:
-#         data = df
-#         first_read = 0
-#     else:
-#         #data = pd.concat((data, df),axis=0)
-#         data = data.add(df)
+    line = ' '
+    while not line.startswith('Total Time:'):
+        line = file.readline()
+        line = line.strip()
+        if not line.startswith('LayerId'):
+            continue
+        else:
+            line = file.readline()
+            line = file.readline()
+            line = line.strip()
+            nums = line.split()
+            Bitrate = nums[2]
+            Y_PSNR = nums[3]
+            U_PSNR = nums[4]
+            V_PSNR = nums[5]
+            
+            while True:
+                line = file.readline()
+                line = line.strip()
+                if line.startswith('Total Time:'):
+                    before, after = line.split('Total Time:')
+                    time, after = after.split('sec. [user]')
+                    EncT = time.strip()
+                    break
+    return Bitrate, Y_PSNR, U_PSNR, V_PSNR, EncT
 
+def get_result(cfg, result_file):
 
-# data.to_csv('bytevca/data.csv')
-# print(data)
+    log_list = get_log_list(cfg)
 
-# data = pd.read_csv('bytevca/THR_MODES_RDO.csv')
-# data = data[data['seq'] == 's2']
-# print(data['mode'].value_counts(1))
+    result_file.write("Seq,Bitrate,Y-PSNR,U-PSNR,V-PSNR,EncT\n")
 
-data = pd.read_csv('bytevca/partition_all.csv')
-df = data[['decision_0', 'decision_1', 'decision_2', 'decision_3', 'decision_4', 'decision_5', 'decision_6', 'decision_7', 'decision_8', 'decision_9']]
-for i in df.index:
-    df.iloc[i, :] = df.iloc[i, :] / df.iloc[i, :].sum()
-#df['bsize'] = df['bsize'].div(40)
-print(df)
-df.to_csv('bytevca/data.csv')
+    for log in log_list:
+        name = log.split('/')[-1]
+        Bitrate, Y_PSNR, U_PSNR, V_PSNR, EncT = get_metric(log)
+        result_file.write("%s,%s,%s,%s,%s,%s\n"%(name, Bitrate, Y_PSNR, U_PSNR, V_PSNR, EncT))

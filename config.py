@@ -59,6 +59,10 @@ def read_cfg(config_file):
                 cfg_dict['output_path'] = line.split('output path:')[1].strip()
                 continue
             
+            if line.startswith('time stamp:'):
+                cfg_dict['time_stamp'] = int(line.split('time stamp:')[1].strip())
+                continue
+
             if line.startswith('processes:'):
                 cfg_dict['processes'] = int(line.split('processes:')[1])
                 continue
@@ -66,7 +70,11 @@ def read_cfg(config_file):
             if line.startswith('fake processe:'):
                 cfg_dict['fake_proc'] = int(line.split('fake processe:')[1])
                 continue
-            
+
+            if line.startswith('log:'):
+                cfg_dict['log'] = int(line.split('log:')[1])
+                continue
+
             if line.startswith('PSNR:'):
                 cfg_dict['psnr'] = int(line.split('PSNR:')[1])
                 continue
