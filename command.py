@@ -8,16 +8,17 @@ def get_cmd_set_VTM_enc(cfg):
         w, h = size.split('x')
         bitdepth = bitdepth.split('bit')[0]
 
-        per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
         if cfg['rate_control_mode'] == 0:
             for qp in cfg['qp']:
                 cmd = cfg['enc_path'] + ' '
-                if len(cfg['config_path1']) > 0:
+                if 'config_path1' in cfg.keys():
                     cmd += '-c' + ' ' + cfg['config_path1'] + ' '
-                if len(cfg['config_path2']) > 0:
+                if 'config_path2' in cfg.keys():
+                    per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
                     cmd += '-c' + ' ' + per_seq_config_path + ' '
                 cmd += '--InputFile=' + cfg['seq_path'] + '/' + seq + ' '
                 cmd += '--BitstreamFile=' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_qp' + str(qp) + '.bin' + ' '
+                cmd += '--ReconFile=' + cfg['output_path']  + '/' + 'rec' + '/' + seq.split('.yuv')[0] + '_qp' + str(qp) + '.rec' + ' '
                 cmd += '--SourceWidth=' + w + ' ' + '--SourceHeight=' + h + ' ' + '--FrameRate=' + fps + ' ' + '--QP=' + str(qp) + ' '
                 cmd += '--InputBitDepth=' + bitdepth + ' '
                 if len(cfg['extra_parameters']) > 0:
@@ -27,12 +28,14 @@ def get_cmd_set_VTM_enc(cfg):
         else:
             for br in cfg['bitrate']:
                 cmd = cfg['enc_path'] + ' '
-                if len(cfg['config_path1']) > 0:
+                if 'config_path1' in cfg.keys():
                     cmd += '-c' + ' ' + cfg['config_path1'] + ' '
-                if len(cfg['config_path2']) > 0:
+                if 'config_path2' in cfg.keys():
+                    per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
                     cmd += '-c' + ' ' + per_seq_config_path + ' '
                 cmd += '--InputFile=' + cfg['seq_path'] + '/' + seq + ' '
                 cmd += '--BitstreamFile=' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_bitrate' + str(br) + '.bin' + ' '
+                cmd += '--ReconFile=' + cfg['output_path']  + '/' + 'rec' + '/' + seq.split('.yuv')[0] + '_bitrate' + str(br) + '.rec' + ' '
                 cmd += '--SourceWidth=' + w + ' ' + '--SourceHeight=' + h + ' ' + '--FrameRate=' + fps + ' ' + '--TargetBitrate=' + str(br) + ' '
                 cmd += '--InputBitDepth=' + bitdepth + ' '
                 if len(cfg['extra_parameters']) > 0:
@@ -47,16 +50,16 @@ def get_cmd_set_VTM_enc(cfg):
         bitdepth = bitdepth.split('bit')[0]
         cmd = cfg['enc_path'] + ' '
 
-        per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
-
         cmd = cfg['enc_path'] + ' '
-        if len(cfg['config_path1']) > 0:
-            cmd += '-c' + ' ' + cfg['config_path1'] + ' '
-        if len(cfg['config_path2']) > 0:
+        if 'config_path1' in cfg.keys():
+                    cmd += '-c' + ' ' + cfg['config_path1'] + ' '
+        if 'config_path2' in cfg.keys():
+            per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
             cmd += '-c' + ' ' + per_seq_config_path + ' '
         cmd += '--InputFile=' + cfg['seq_path'] + '/' + cfg['test_seq'][0] + ' '
         cmd += '--SourceWidth=' + w + ' ' + '--SourceHeight=' + h + ' ' + '--FrameRate=' + fps + ' ' + '--QP=' + str(0) + ' '
         cmd += '--BitstreamFile=' + cfg['output_path']  + '/' + 'bin' + '/fake.bin' + ' '
+        cmd += '--ReconFile=' + cfg['output_path']  + '/' + 'rec' + '/fake.yuv' + ' '
         cmd += '--InputBitDepth=' + bitdepth + ' '
         cmd += '1>/dev/null 2>&1'
         cmd_set.append(cmd)
@@ -121,7 +124,7 @@ def get_cmd_set_AV1_enc(cfg):
             for qp in cfg['qp']:
                 cmd = cfg['enc_path'] + ' '
                 cmd += cfg['seq_path'] + '/' + seq + ' '
-                if len(cfg['config_path1']) > 0:
+                if 'config_path1' in cfg.keys():
                     cmd += '-c' + ' ' + cfg['config_path1'] + ' '
                 cmd += '--output=' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_qp' + str(qp) + '.bin' + ' '
                 cmd += '--width=' + w + ' ' + '--height=' + h + ' ' + '--fps=' + fps + '/1' + ' ' + '--cq-level=' + str(qp) + ' ' + '--end-usage=q' + ' '
@@ -135,7 +138,7 @@ def get_cmd_set_AV1_enc(cfg):
             for br in cfg['bitrate']:
                 cmd = cfg['enc_path'] + ' '
                 cmd += cfg['seq_path'] + '/' + seq + ' '
-                if len(cfg['config_path1']) > 0:
+                if 'config_path1' in cfg.keys():
                     cmd += '-c' + ' ' + cfg['config_path1'] + ' '
                 cmd += '--output=' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_bitrate' + str(br) + '.bin' + ' '
                 cmd += '--width=' + w + ' ' + '--height=' + h + ' ' + '--fps=' + fps + '/1' + ' ' + '--target-bitrate=' + str(br) + ' ' + '--end-usage=vbr' + ' '
@@ -153,7 +156,7 @@ def get_cmd_set_AV1_enc(cfg):
         bitdepth = bitdepth.split('bit')[0]
         cmd = cfg['enc_path'] + ' '
         cmd += cfg['seq_path'] + '/' + seq + ' '
-        if len(cfg['config_path1']) > 0:
+        if 'config_path1' in cfg.keys():
             cmd += '-c' + ' ' + cfg['config_path1'] + ' '
         cmd += '--output=' + cfg['output_path']  + '/' + 'bin' + '/fake.bin' + ' '
         cmd += '--width=' + w + ' ' + '--height=' + h + ' ' + '--fps=' + fps + '/1' + ' ' + '--cq-level=' + str(0) + ' ' + '--end-usage=cq' + ' '
@@ -216,14 +219,14 @@ def get_cmd_set_HPM_enc(cfg):
         w, h = size.split('x')
         bitdepth = bitdepth.split('bit')[0]
 
-        per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
         if cfg['rate_control_mode'] == 0:
             for qp in cfg['qp']:
                 cmd = cfg['enc_path'] + ' '
-                if len(cfg['config_path1']) > 0:
-                    cmd += '--config' + ' ' + cfg['config_path1'] + ' '
-                if len(cfg['config_path2']) > 0:
-                    cmd += '--config' + ' ' + per_seq_config_path + ' '
+                if 'config_path1' in cfg.keys():
+                    cmd += '-c' + ' ' + cfg['config_path1'] + ' '
+                if 'config_path2' in cfg.keys():
+                    per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
+                    cmd += '-c' + ' ' + per_seq_config_path + ' '
                 cmd += '--input ' + cfg['seq_path'] + '/' + seq + ' '
                 cmd += '--output ' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_qp' + str(qp) + '.bin' + ' '
                 cmd += '--width ' + w + ' ' + '--height ' + h + ' ' + '--frame_rate ' + fps + ' ' + '--op_qp ' + str(qp) + ' '
@@ -235,9 +238,10 @@ def get_cmd_set_HPM_enc(cfg):
         else:
             for br in cfg['bitrate']:
                 cmd = cfg['enc_path'] + ' '
-                if len(cfg['config_path1']) > 0:
+                if 'config_path1' in cfg.keys():
                     cmd += '-c' + ' ' + cfg['config_path1'] + ' '
-                if len(cfg['config_path2']) > 0:
+                if 'config_path2' in cfg.keys():
+                    per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
                     cmd += '-c' + ' ' + per_seq_config_path + ' '
                 cmd += '--input ' + cfg['seq_path'] + '/' + seq + ' '
                 cmd += '--output ' + cfg['output_path']  + '/' + 'bin' + '/' + seq.split('.yuv')[0] + '_bitrate' + str(br) + '.bin' + ' '
@@ -255,13 +259,12 @@ def get_cmd_set_HPM_enc(cfg):
         bitdepth = bitdepth.split('bit')[0]
         cmd = cfg['enc_path'] + ' '
 
-        per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
-
         cmd = cfg['enc_path'] + ' '
-        if len(cfg['config_path1']) > 0:
-            cmd += '--config' + ' ' + cfg['config_path1'] + ' '
-        if len(cfg['config_path2']) > 0:
-            cmd += '--config' + ' ' + per_seq_config_path + ' '
+        if 'config_path1' in cfg.keys():
+                    cmd += '-c' + ' ' + cfg['config_path1'] + ' '
+        if 'config_path2' in cfg.keys():
+            per_seq_config_path = cfg['config_path2'] + '/' + name + '.cfg'
+            cmd += '-c' + ' ' + per_seq_config_path + ' '
         cmd += '--input ' + cfg['seq_path'] + '/' + cfg['test_seq'][0] + ' '
         cmd += '--width ' + w + ' ' + '--height ' + h + ' ' + '--frame_rate ' + fps + ' ' + '--op_qp ' + str(0) + ' '
         cmd += '--output ' + cfg['output_path']  + '/' + 'bin' + '/fake.bin' + ' '

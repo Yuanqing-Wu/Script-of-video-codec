@@ -99,6 +99,8 @@ def read_cfg(config_file):
                         continue
                     if line.startswith('}'):
                         break
+                    if '#' in line:
+                        line = line.split('#')[0]
 
                     cfg_dict['test_seq'].append(line.strip())
                 break

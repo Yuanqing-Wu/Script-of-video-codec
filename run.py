@@ -5,7 +5,7 @@ from command import get_cmd_set
 from processor import multi_processor, single_processor
 from log import get_result
 
-cfg_file_path = 'vtm.cfg'
+cfg_file_path = 'bs_dataset.cfg'
 cfg = read_cfg(cfg_file_path)
 
 if cfg['time_stamp'] > 0:
