@@ -23,7 +23,7 @@ def multi_processor(cfg, cmd_set):
         #print(len(sub_proc))
         if len(sub_proc) < cfg['processes']:
             cmd, seq, qp_or_br = cmd_set[StartedProc]
-            print("==> Start running %50s %d"%(seq, qp_or_br))
+            print("==> Start running %50s %s"%(seq, qp_or_br))
             #print(cmd)
             p = subprocess.Popen(cmd, shell=True)
             sub_proc.append(p)
@@ -47,5 +47,5 @@ def multi_processor(cfg, cmd_set):
 
 def single_processor(cmd_set):
     for cmd in cmd_set:
-        print("==> Start encoding %50s %d"%(cmd[1], cmd[2]))
+        print("==> Start encoding %50s %s"%(cmd[1], cmd[2]))
         os.system(cmd[0])

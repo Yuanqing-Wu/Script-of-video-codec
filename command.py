@@ -310,11 +310,51 @@ def get_cmd_set_HPM_dec(cfg):
 
 
 def get_cmd_set_HPM(cfg, enc_dec='enc'):
-
     if enc_dec == 'enc':
         return get_cmd_set_HPM_enc(cfg)
     elif enc_dec == 'dec':
         return get_cmd_set_HPM_dec(cfg)
+
+def get_cmd_set_BVC2Live_enc(cfg):
+    cmd_set = []
+    for seq in cfg['test_seq']:
+
+        seq_name = seq.split()[0]
+        name_s = seq_name .split('_')
+        size = name_s[-2]
+        fps = name_s[-1].split('.')[0]
+        w, h = size.split('x')
+
+        q = [i for i in seq.split()]
+        del(q[0])
+
+        if cfg['rate_control_mode'] == 0 or cfg['rate_control_mode'] == 3:
+            if cfg['rate_control_mode'] == 0:
+                rc = 'q'
+            else:
+                rc = 'crf'
+
+            for qp in q:
+                cmd = cfg['enc_path'] + ' '
+                cmd += '-i' + ' ' + cfg['seq_path'] + '/' + seq_name + ' '
+                cmd += '-b' + ' ' + cfg['output_path']  + '/' + 'bin' + '/' + seq_name.split('.yuv')[0] + '_' + rc + qp + '.bin' + ' '
+                cmd += '-wdt' + ' ' + w + ' ' + '-hgt' + ' ' + h + ' ' + '-fr' + ' ' + fps + ' ' + '-' + rc + ' ' + qp + ' ' + '-rc' + ' ' + str(cfg['rate_control_mode']) + ' '
+                if len(cfg['extra_parameters']) > 0:
+                    cmd += cfg['extra_parameters'] + ' '
+                cmd += '>' + cfg['output_path']  + '/' + 'log' + '/Enc_' + seq_name.split('.yuv')[0] + '_' + rc + qp + '.log' + ' '
+                cmd += '2>&1'
+                cmd_set.append([cmd, seq_name, qp])
+
+    return cmd_set
+
+def get_cmd_set_BVC2Live_dec(cfg):
+    return 0
+
+def get_cmd_set_BVC2Live(cfg, enc_dec='enc'):
+    if enc_dec == 'enc':
+        return get_cmd_set_BVC2Live_enc(cfg)
+    elif enc_dec == 'dec':
+        return get_cmd_set_BVC2Live_dec(cfg)
 
 def get_cmd_set(cfg, enc_dec='enc'):
     if cfg['codec'] == 0:
@@ -325,5 +365,7 @@ def get_cmd_set(cfg, enc_dec='enc'):
         return get_cmd_set_AV1(cfg, enc_dec)
     elif cfg['codec'] == 3:
         return get_cmd_set_HPM(cfg, enc_dec)
+    elif cfg['codec'] == 4:
+        return get_cmd_set_BVC2Live(cfg, enc_dec)
 
 

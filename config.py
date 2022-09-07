@@ -101,8 +101,7 @@ def read_cfg(config_file):
                         break
                     if '#' in line:
                         line = line.split('#')[0]
-
-                    cfg_dict['test_seq'].append(line.strip())
+                    cfg_dict['test_seq'].append(line)
                 break
     return cfg_dict
 
